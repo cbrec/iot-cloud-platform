@@ -21,28 +21,22 @@ to the device's MQTT topic at a rate of one per second, and then exits.
 Before you run the sample, you must follow the instructions in the README
 for this sample.
 """
-
 import argparse
 import datetime
 import os
 import time
 import json
-
 import jwt
 import paho.mqtt.client as mqtt
 
-import random
-import RPi.GPIO as GPIO
+# import sensors code
+from sensors_data.ir_sensor import *
+from sensors_data.mq135_gas_sensor import *
 
-
-GPIO.setmode(GPIO.BOARD)
-
-GPIO.setup(3, GPIO.IN)
-
-def get_ir_value():
-    val = GPIO.input(3)
-    return val
-
+mq = MQ() # for gas sensor
+def get_payload():
+    return mq.MQPercentage() # gas sensor
+    return get_ir_value() # ir sensor
 
 def create_jwt(project_id, private_key_file, algorithm):
     """Creates a JWT (https://jwt.io) to establish an MQTT connection.
@@ -193,8 +187,12 @@ def main():
 
     # Publish num_messages mesages to the MQTT bridge once per second.
     for i in range(1, args.num_messages + 1):
-
-        payload = {"timestamp": int(time.time()), "device": args.device_id, "ir_value": get_ir_value()}
+        
+        payload = get_payload()
+        
+        payload["timestamp"] = int(time.time());
+        payload["device"] = args.device_id, 
+        
         print('Publishing message {} of {}: \'{}\''.format(
                 i, args.num_messages, payload))
         jsonpayload =  json.dumps(payload,indent=4)

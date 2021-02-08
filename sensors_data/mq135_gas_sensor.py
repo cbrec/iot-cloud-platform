@@ -6,21 +6,20 @@ import Adafruit_MCP3008
 
 class MQ():
 
+    # Software SPI
     #CLK  = 23
     #MISO = 21
     #MOSI = 19
     #CS   = 24
     #mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
+    # Hardware SPI
     SPI_PORT   = 0
     SPI_DEVICE = 0
     mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 
-
     RL_VALUE = 5
-    #RO_CLEAN_AIR_FACTOR = 9.83
     RO_CLEAN_AIR_FACTOR = 3.62
-
 
     CALIBARAION_SAMPLE_TIMES = 50
     CALIBRATION_SAMPLE_INTERVAL = 500
@@ -33,7 +32,6 @@ class MQ():
     GAS_CO = 1
     GAS_NH4 = 2
 
-    #Ro=3.46
     def __init__(self, Ro=20, analogPin=0):
         self.Ro = Ro
         self.MQ_PIN = analogPin
@@ -56,9 +54,7 @@ class MQ():
         return val
 
     def MQResistanceCalculation(self, raw_adc):
-	if raw_adc == 0:
-		raw_adc = 1
-        return float(self.RL_VALUE * (1023.0 - raw_adc) / float(raw_adc));
+	    return float(self.RL_VALUE * (1023.0 - raw_adc) / float(raw_adc));
 
 
     def MQCalibration(self, mq_pin):
@@ -98,5 +94,3 @@ class MQ():
 
     def MQGetPercentage(self, rs_ro_ratio, pcurve):
         return (math.pow(10, (((math.log(rs_ro_ratio) - pcurve[1]) / pcurve[2]) + pcurve[0])))
-
-mq = MQ()
