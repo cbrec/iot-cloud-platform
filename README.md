@@ -1,4 +1,4 @@
-# IOT CLOUD PLATFORM
+# Data Acquisition Platform - IoT to Cloud
 
 - This project is designed in order to ease the process of setting up multiple sensors with an IOT device and sending the data from local to cloud servers using MQTT protocol.
 
